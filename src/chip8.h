@@ -5,17 +5,18 @@
 #include <string>
 #include <random>
 #include <array>
+#include <map>
 class Chip8{
 
 
 public:
   Chip8();
-  std::array<uint8_t, 16> keyboard{};
-  std::array<uint32_t, 64*32> display{};
-
   void loadROM(const std::string &file);
   void cycle();
-
+  std::array<uint8_t, 16> keyboard{};
+  std::array<uint32_t, 64*32> display{};
+  typedef void (Chip8::*MFP)();
+  std::map <uint16_t, MFP> opMap;
 
 private:
   std::array<uint8_t,4096> ram{}; //4KB of memory from 0x000 to 0xFFF,

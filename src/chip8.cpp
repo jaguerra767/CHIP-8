@@ -30,6 +30,7 @@ std::array<uint8_t, FONTSET_SIZE> fontset = { 0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
                                             	0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
                                             	0xF0, 0x80, 0xF0, 0x80, 0x80 }; // F
 Chip8::Chip8(){
+  opMap.insert(std::make_pair(0x00E0,&Chip8::i00E0));
   programCounter = PROG_START_ADDR;
 
   //load fontset to memory
