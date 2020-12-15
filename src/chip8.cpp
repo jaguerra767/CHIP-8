@@ -12,6 +12,7 @@ const uint16_t KK_MASK = 0x00FFu;
 const uint16_t N_MASK = 0x000Fu;
 const uint8_t DISP_H = 32;
 const uint8_t DISP_W = 64;
+const uint16_t OP_CODE_MASK = 0xF00F;
 
 std::array<uint8_t, FONTSET_SIZE> fontset = { 0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
                                               0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -52,8 +53,8 @@ Chip8::Chip8(){
   opMap.insert(std::make_pair(0x9000,&Chip8::i9xy0));
   opMap.insert(std::make_pair(0xA000,&Chip8::iAnnn));
   opMap.insert(std::make_pair(0xB000,&Chip8::iBnnn));
-  opMap.insert(std::make_pair(0xC000,&Chip8::iCnnn));
-  opMap.insert(std::make_pair(0xD000,&Chip8::iDnnn));
+  opMap.insert(std::make_pair(0xC000,&Chip8::iCxkk));
+  opMap.insert(std::make_pair(0xD000,&Chip8::iDxyn));
   opMap.insert(std::make_pair(0xE09E,&Chip8::iEx9E));
   opMap.insert(std::make_pair(0xE0A1,&Chip8::iExA1));
   opMap.insert(std::make_pair(0xF007,&Chip8::iFx07));
@@ -451,4 +452,19 @@ void Chip8::iFx65(){
 	{
 		registers[i] = ram[index + i];
 	}
+}
+
+void Chip8::cycle(){
+  opcode = (ram[programCounter] << 8u) | ram[programCounter +1];
+  programCounter += 2;
+  opMap[opcode & OP_CODE_MASK];
+
+  if (delay > 0){
+    --delay;
+  }
+  if (sound > 0)
+  {
+    --sound;
+  }
+
 }
