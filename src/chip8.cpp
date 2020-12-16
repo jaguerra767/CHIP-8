@@ -457,7 +457,7 @@ void Chip8::iFx65(){
 void Chip8::cycle(){
   opcode = (ram[programCounter] << 8u) | ram[programCounter +1];
   programCounter += 2;
-  opMap[opcode & OP_CODE_MASK];
+  auto operation = opMap.find(opcode & OP_CODE_MASK);
 
   if (delay > 0){
     --delay;
