@@ -1,4 +1,4 @@
-#include "Platform.hpp"
+#include "platform.h"
 #include <SDL2/SDL.h>
 
 
@@ -30,7 +30,7 @@ void Platform::Update(void const* buffer, int pitch)
 	SDL_RenderPresent(renderer);
 }
 
-bool Platform::ProcessInput(uint8_t* keys)
+bool Platform::ProcessInput(std::array<uint8_t, 16> keys)
 {
 	bool quit = false;
 

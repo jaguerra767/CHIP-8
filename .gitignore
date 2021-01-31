@@ -1,3 +1,5 @@
+build/
 lib/
 include/
+BC_test.ch8
 .DS_Store

@@ -2,17 +2,7 @@
 #include <random>
 #include "chip8.h"
 
-const uint16_t PROG_START_ADDR = 0x200;
-const uint16_t FONTSET_START_ADDR = 0x50;
-const uint8_t  FONTSET_SIZE = 80;
-const uint16_t NNN_MASK = 0x0FFFu;
-const uint16_t VX_MASK = 0x0F00u;
-const uint16_t VY_MASK = 0x00FFu;
-const uint16_t KK_MASK = 0x00FFu;
-const uint16_t N_MASK = 0x000Fu;
-const uint8_t DISP_H = 32;
-const uint8_t DISP_W = 64;
-const uint16_t OP_CODE_MASK = 0xF00F;
+
 
 std::array<uint8_t, FONTSET_SIZE> fontset = { 0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
                                               0x20, 0x60, 0x20, 0x20, 0x70, // 1
@@ -100,7 +90,7 @@ void Chip8::loadROM(const std::string &filename){
 }
 
 void Chip8::i00E0(){
-  display.fill(0);
+  memset(display, 0, sizeof(display));
 }
 
 void Chip8::i00EE(){

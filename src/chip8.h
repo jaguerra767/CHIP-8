@@ -7,6 +7,19 @@
 #include <array>
 #include <map>
 
+
+const uint16_t PROG_START_ADDR = 0x200;
+const uint16_t FONTSET_START_ADDR = 0x50;
+const uint8_t  FONTSET_SIZE = 80;
+const uint16_t NNN_MASK = 0x0FFFu;
+const uint16_t VX_MASK = 0x0F00u;
+const uint16_t VY_MASK = 0x00FFu;
+const uint16_t KK_MASK = 0x00FFu;
+const uint16_t N_MASK = 0x000Fu;
+const uint8_t DISP_H = 32;
+const uint8_t DISP_W = 64;
+const uint16_t OP_CODE_MASK = 0xF00F;
+
 class Chip8{
 
 
@@ -15,7 +28,7 @@ public:
   void loadROM(const std::string &file);
   void cycle();
   std::array<uint8_t, 16> keyboard{};
-  std::array<uint32_t, 64*32> display{};
+  uint32_t display[DISP_W * DISP_H];
   typedef void (Chip8::*MFP)();
   std::map <uint16_t, MFP> opMap;
 
