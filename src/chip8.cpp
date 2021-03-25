@@ -1,5 +1,7 @@
 #include <fstream>
 #include <random>
+#include <functional>
+#include <iostream>
 #include "chip8.h"
 
 
@@ -21,8 +23,10 @@ std::array<uint8_t, FONTSET_SIZE> fontset = { 0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
                                             	0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
                                             	0xF0, 0x80, 0xF0, 0x80, 0x80 }; // F
 Chip8::Chip8(){
+
   //Create opcode to function pointer
-  opMap.insert(std::make_pair(0x00E0,&Chip8::i00E0));
+  //opMap.insert(std::make_pair(0x00E0,&Chip8::i00E0));
+  opMap.insert(std::make_pair(0x0,&Chip8::i00E0));
   opMap.insert(std::make_pair(0x00EE,&Chip8::i00EE));
   opMap.insert(std::make_pair(0x1000,&Chip8::i1nnn));
   opMap.insert(std::make_pair(0x2000,&Chip8::i2nnn));
@@ -88,6 +92,38 @@ void Chip8::loadROM(const std::string &filename){
     delete[] buffer;
   }
 }
+
+void Chip8::cycle(){
+
+  opcode = (ram[programCounter] << 8u) | ram[programCounter + 1];
+
+  programCounter += 2;
+
+  if ((opcode & 0xf0ffu) != 0xF029){
+    auto itMap = opMap.find(opcode & OP_CODE_MASK);
+    if (itMap != opMap.end()){
+      MFP operation = opMap[(opcode & OP_CODE_MASK)];
+      std::invoke(operation,this);
+    }else{
+      std::cout << "opcode not found:" <<std::hex << (opcode & 0xf0ffu) << std::endl;
+    }
+  }else{
+    MFP operation = opMap[0xF029];
+    std::invoke(operation,this);
+  }
+
+
+  if (delay > 0){
+    --delay;
+  }
+  if (sound > 0)
+  {
+    --sound;
+  }
+
+}
+
+
 
 void Chip8::i00E0(){
   memset(display, 0, sizeof(display));
@@ -442,19 +478,4 @@ void Chip8::iFx65(){
 	{
 		registers[i] = ram[index + i];
 	}
-}
-
-void Chip8::cycle(){
-  opcode = (ram[programCounter] << 8u) | ram[programCounter +1];
-  programCounter += 2;
-  auto operation = opMap.find(opcode & OP_CODE_MASK);
-
-  if (delay > 0){
-    --delay;
-  }
-  if (sound > 0)
-  {
-    --sound;
-  }
-
 }

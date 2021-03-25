@@ -18,7 +18,7 @@ const uint16_t KK_MASK = 0x00FFu;
 const uint16_t N_MASK = 0x000Fu;
 const uint8_t DISP_H = 32;
 const uint8_t DISP_W = 64;
-const uint16_t OP_CODE_MASK = 0xF00F;
+const uint16_t OP_CODE_MASK = 0xF000u;
 
 class Chip8{
 
@@ -29,7 +29,7 @@ public:
   void cycle();
   std::array<uint8_t, 16> keyboard{};
   uint32_t display[DISP_W * DISP_H];
-  typedef void (Chip8::*MFP)();
+  typedef void (Chip8::*MFP)(void);
   std::map <uint16_t, MFP> opMap;
 
 private:
