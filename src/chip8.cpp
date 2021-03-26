@@ -22,8 +22,7 @@ std::array<uint8_t, FONTSET_SIZE> fontset = { 0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
                                             	0xF0, 0x80, 0xF0, 0x80, 0x80 }; // F
 Chip8::Chip8(){
   //Create opcode to function pointer
-  opMap.insert(std::make_pair(0x00E0,&Chip8::i00E0));
-  opMap.insert(std::make_pair(0x00EE,&Chip8::i00EE));
+  opMap.insert(std::make_pair(0x0000,&Chip8::op0));
   opMap.insert(std::make_pair(0x1000,&Chip8::i1nnn));
   opMap.insert(std::make_pair(0x2000,&Chip8::i2nnn));
   opMap.insert(std::make_pair(0x3000,&Chip8::i3xkk));
@@ -31,32 +30,42 @@ Chip8::Chip8(){
   opMap.insert(std::make_pair(0x5000,&Chip8::i5xy0));
   opMap.insert(std::make_pair(0x6000,&Chip8::i6xkk));
   opMap.insert(std::make_pair(0x7000,&Chip8::i7xkk));
-  opMap.insert(std::make_pair(0x8000,&Chip8::i8xy0));
-  opMap.insert(std::make_pair(0x8001,&Chip8::i8xy1));
-  opMap.insert(std::make_pair(0x8002,&Chip8::i8xy2));
-  opMap.insert(std::make_pair(0x8003,&Chip8::i8xy3));
-  opMap.insert(std::make_pair(0x8004,&Chip8::i8xy4));
-  opMap.insert(std::make_pair(0x8005,&Chip8::i8xy5));
-  opMap.insert(std::make_pair(0x8006,&Chip8::i8xy6));
-  opMap.insert(std::make_pair(0x8007,&Chip8::i8xy7));
-  opMap.insert(std::make_pair(0x800E,&Chip8::i8xyE));
+  opMap.insert(std::make_pair(0x8000,&Chip8::op8));
   opMap.insert(std::make_pair(0x9000,&Chip8::i9xy0));
   opMap.insert(std::make_pair(0xA000,&Chip8::iAnnn));
   opMap.insert(std::make_pair(0xB000,&Chip8::iBnnn));
   opMap.insert(std::make_pair(0xC000,&Chip8::iCxkk));
   opMap.insert(std::make_pair(0xD000,&Chip8::iDxyn));
-  opMap.insert(std::make_pair(0xE09E,&Chip8::iEx9E));
-  opMap.insert(std::make_pair(0xE0A1,&Chip8::iExA1));
-  opMap.insert(std::make_pair(0xF007,&Chip8::iFx07));
-  opMap.insert(std::make_pair(0xF00A,&Chip8::iFx0A));
-  opMap.insert(std::make_pair(0xF015,&Chip8::iFx15));
-  opMap.insert(std::make_pair(0xF018,&Chip8::iFx18));
-  opMap.insert(std::make_pair(0xF01E,&Chip8::iFx1E));
-  opMap.insert(std::make_pair(0xF029,&Chip8::iFx29));
-  opMap.insert(std::make_pair(0xF033,&Chip8::iFx33));
-  opMap.insert(std::make_pair(0xF055,&Chip8::iFx55));
-  opMap.insert(std::make_pair(0xF065,&Chip8::iFx65));
+  opMap.insert(std::make_pair(0xE000,&Chip8::opE));
+  opMap.insert(std::make_pair(0xF000,&Chip8::opF));
 
+  opMap0.insert(std::make_pair(0x0),&Chip8::i00E0);
+  opMap0.insert(std::make_pair(0xE),&Chip8::i00EE);
+
+  opMap8.insert(std::make_pair(0x0),&Chip8::i8xy0);
+  opMap8.insert(std::make_pair(0x1),&Chip8::i8xy1);
+  opMap8.insert(std::make_pair(0x2),&Chip8::i8xy2);
+  opMap8.insert(std::make_pair(0x3),&Chip8::i8xy3);
+  opMap8.insert(std::make_pair(0x4),&Chip8::i8xy4);
+  opMap8.insert(std::make_pair(0x5),&Chip8::i8xy5);
+  opMap8.insert(std::make_pair(0x6),&Chip8::i8xy6);
+  opMap8.insert(std::make_pair(0x7),&Chip8::i8xy7);
+  opMap8.insert(std::make_pair(0xE),&Chip8::i8xyE);
+
+  opMapE.insert(std::make_pair(0x1),&Chip8::iExA1);
+  opMapE.insert(std::make_pair(0xE),&Chip8::iEx9E);
+
+  opMapF.insert(std::make_pair(0x07), &Chip8::iFx07);
+  opMapF.insert(std::make_pair(0x0A), &Chip8::iFx0A);
+  opMapF.insert(std::make_pair(0x15), &Chip8::iFx15);
+  opMapF.insert(std::make_pair(0x18), &Chip8::iFx18);
+  opMapF.insert(std::make_pair(0x1E), &Chip8::iFx1E);
+  opMapF.insert(std::make_pair(0x29), &Chip8::iFx29);
+  opMapF.insert(std::make_pair(0x33), &Chip8::iFx33);
+  opMapF.insert(std::make_pair(0x55), &Chip8::iFx55);
+  opMapF.insert(std::make_pair(0x65), &Chip8::iFx65);
+
+  //Initialize program counter
   programCounter = PROG_START_ADDR;
 
   //load fontset to memory
@@ -89,11 +98,9 @@ void Chip8::loadROM(const std::string &filename){
   }
 }
 
-<<<<<<< HEAD
 void Chip8::cycle(){
   //Decode opcode
   opcode = (ram[programCounter] << 8u) | ram[programCounter + 1];
-  std::cout << std::hex << (opcode & OP_CODE_MASK);
   //Increment programCounter
 
   programCounter += 2;
@@ -102,9 +109,7 @@ void Chip8::cycle(){
   if (itMap != opMap.end()){
     MFP operation = opMap[(opcode & OP_CODE_MASK)];
     std::invoke(operation,this);
-  }//else{
-    //std::cout << "opcode not found:" << (opcode) << std::endl;
-//  }
+  }
   //Sound and Delay decrements
   if (delay > 0){
     --delay;
@@ -115,10 +120,22 @@ void Chip8::cycle(){
   }
 }
 
+void Chip8::op0(){
 
+}
 
-=======
->>>>>>> parent of 2f71e2e (added db)
+void Chip8::op8(){
+
+}
+
+void Chip8::opE(){
+
+}
+
+void Chip8::opF(){
+
+}
+
 void Chip8::i00E0(){
   memset(display, 0, sizeof(display));
 }
@@ -472,19 +489,4 @@ void Chip8::iFx65(){
 	{
 		registers[i] = ram[index + i];
 	}
-}
-
-void Chip8::cycle(){
-  opcode = (ram[programCounter] << 8u) | ram[programCounter +1];
-  programCounter += 2;
-  auto operation = opMap.find(opcode & OP_CODE_MASK);
-
-  if (delay > 0){
-    --delay;
-  }
-  if (sound > 0)
-  {
-    --sound;
-  }
-
 }

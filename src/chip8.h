@@ -18,11 +18,10 @@ const uint16_t KK_MASK = 0x00FFu;
 const uint16_t N_MASK = 0x000Fu;
 const uint8_t DISP_H = 32;
 const uint8_t DISP_W = 64;
-<<<<<<< HEAD
-const uint16_t OP_CODE_MASK = 0xF00Fu;
-=======
-const uint16_t OP_CODE_MASK = 0xF00F;
->>>>>>> parent of 2f71e2e (added db)
+const uint16_t OP_CODE_MASK = 0xF000u;
+const uint16_t OP_CODE_MASK_B = 0x000Fu;
+
+
 
 class Chip8{
 
@@ -35,6 +34,10 @@ public:
   uint32_t display[DISP_W * DISP_H];
   typedef void (Chip8::*MFP)();
   std::map <uint16_t, MFP> opMap;
+  std::map <uint16_t, MFP> opMap0;
+  std::map <uint16_t, MFP> opMap8;
+  std::map <uint16_t, MFP> opMapE;
+  std::map <uint16_t, MFP> opMapF;
 
 private:
   std::array<uint8_t,4096> ram{}; //4KB of memory from 0x000 to 0xFFF,
@@ -51,6 +54,11 @@ private:
   std::random_device device;
   std::mt19937 generator;
   std::uniform_int_distribution<uint8_t> randByte;
+  //Opcode functions
+  void op0();
+  void op8();
+  void opE();
+  void opF();
 
 
   void i00E0(); //(CLS) Clear the display
