@@ -22,48 +22,48 @@ std::array<uint8_t, FONTSET_SIZE> fontset = { 0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
                                             	0xF0, 0x80, 0xF0, 0x80, 0x80 }; // F
 Chip8::Chip8(){
   //Create opcode to function pointer
-  opMap.insert(std::make_pair(0x0000,&Chip8::op0));
-  opMap.insert(std::make_pair(0x1000,&Chip8::i1nnn));
-  opMap.insert(std::make_pair(0x2000,&Chip8::i2nnn));
-  opMap.insert(std::make_pair(0x3000,&Chip8::i3xkk));
-  opMap.insert(std::make_pair(0x4000,&Chip8::i4xkk));
-  opMap.insert(std::make_pair(0x5000,&Chip8::i5xy0));
-  opMap.insert(std::make_pair(0x6000,&Chip8::i6xkk));
-  opMap.insert(std::make_pair(0x7000,&Chip8::i7xkk));
-  opMap.insert(std::make_pair(0x8000,&Chip8::op8));
-  opMap.insert(std::make_pair(0x9000,&Chip8::i9xy0));
-  opMap.insert(std::make_pair(0xA000,&Chip8::iAnnn));
-  opMap.insert(std::make_pair(0xB000,&Chip8::iBnnn));
-  opMap.insert(std::make_pair(0xC000,&Chip8::iCxkk));
-  opMap.insert(std::make_pair(0xD000,&Chip8::iDxyn));
-  opMap.insert(std::make_pair(0xE000,&Chip8::opE));
-  opMap.insert(std::make_pair(0xF000,&Chip8::opF));
+  opMap.insert(std::make_pair(0x0000, &Chip8::op0));
+  opMap.insert(std::make_pair(0x1000, &Chip8::i1nnn));
+  opMap.insert(std::make_pair(0x2000, &Chip8::i2nnn));
+  opMap.insert(std::make_pair(0x3000, &Chip8::i3xkk));
+  opMap.insert(std::make_pair(0x4000, &Chip8::i4xkk));
+  opMap.insert(std::make_pair(0x5000, &Chip8::i5xy0));
+  opMap.insert(std::make_pair(0x6000, &Chip8::i6xkk));
+  opMap.insert(std::make_pair(0x7000, &Chip8::i7xkk));
+  opMap.insert(std::make_pair(0x8000, &Chip8::op8));
+  opMap.insert(std::make_pair(0x9000, &Chip8::i9xy0));
+  opMap.insert(std::make_pair(0xA000, &Chip8::iAnnn));
+  opMap.insert(std::make_pair(0xB000, &Chip8::iBnnn));
+  opMap.insert(std::make_pair(0xC000, &Chip8::iCxkk));
+  opMap.insert(std::make_pair(0xD000, &Chip8::iDxyn));
+  opMap.insert(std::make_pair(0xE000, &Chip8::opE));
+  opMap.insert(std::make_pair(0xF000, &Chip8::opF));
 
-  opMap0.insert(std::make_pair(0x0),&Chip8::i00E0);
-  opMap0.insert(std::make_pair(0xE),&Chip8::i00EE);
+  opMap0.insert(std::make_pair(0x0, &Chip8::i00E0));
+  opMap0.insert(std::make_pair(0xE, &Chip8::i00EE));
 
-  opMap8.insert(std::make_pair(0x0),&Chip8::i8xy0);
-  opMap8.insert(std::make_pair(0x1),&Chip8::i8xy1);
-  opMap8.insert(std::make_pair(0x2),&Chip8::i8xy2);
-  opMap8.insert(std::make_pair(0x3),&Chip8::i8xy3);
-  opMap8.insert(std::make_pair(0x4),&Chip8::i8xy4);
-  opMap8.insert(std::make_pair(0x5),&Chip8::i8xy5);
-  opMap8.insert(std::make_pair(0x6),&Chip8::i8xy6);
-  opMap8.insert(std::make_pair(0x7),&Chip8::i8xy7);
-  opMap8.insert(std::make_pair(0xE),&Chip8::i8xyE);
+  opMap8.insert(std::make_pair(0x0, &Chip8::i8xy0));
+  opMap8.insert(std::make_pair(0x1, &Chip8::i8xy1));
+  opMap8.insert(std::make_pair(0x2, &Chip8::i8xy2));
+  opMap8.insert(std::make_pair(0x3, &Chip8::i8xy3));
+  opMap8.insert(std::make_pair(0x4, &Chip8::i8xy4));
+  opMap8.insert(std::make_pair(0x5, &Chip8::i8xy5));
+  opMap8.insert(std::make_pair(0x6, &Chip8::i8xy6));
+  opMap8.insert(std::make_pair(0x7, &Chip8::i8xy7));
+  opMap8.insert(std::make_pair(0xE, &Chip8::i8xyE));
 
-  opMapE.insert(std::make_pair(0x1),&Chip8::iExA1);
-  opMapE.insert(std::make_pair(0xE),&Chip8::iEx9E);
+  opMapE.insert(std::make_pair(0x1, &Chip8::iExA1));
+  opMapE.insert(std::make_pair(0xE, &Chip8::iEx9E));
 
-  opMapF.insert(std::make_pair(0x07), &Chip8::iFx07);
-  opMapF.insert(std::make_pair(0x0A), &Chip8::iFx0A);
-  opMapF.insert(std::make_pair(0x15), &Chip8::iFx15);
-  opMapF.insert(std::make_pair(0x18), &Chip8::iFx18);
-  opMapF.insert(std::make_pair(0x1E), &Chip8::iFx1E);
-  opMapF.insert(std::make_pair(0x29), &Chip8::iFx29);
-  opMapF.insert(std::make_pair(0x33), &Chip8::iFx33);
-  opMapF.insert(std::make_pair(0x55), &Chip8::iFx55);
-  opMapF.insert(std::make_pair(0x65), &Chip8::iFx65);
+  opMapF.insert(std::make_pair(0x07, &Chip8::iFx07));
+  opMapF.insert(std::make_pair(0x0A, &Chip8::iFx0A));
+  opMapF.insert(std::make_pair(0x15, &Chip8::iFx15));
+  opMapF.insert(std::make_pair(0x18, &Chip8::iFx18));
+  opMapF.insert(std::make_pair(0x1E, &Chip8::iFx1E));
+  opMapF.insert(std::make_pair(0x29, &Chip8::iFx29));
+  opMapF.insert(std::make_pair(0x33, &Chip8::iFx33));
+  opMapF.insert(std::make_pair(0x55, &Chip8::iFx55));
+  opMapF.insert(std::make_pair(0x65, &Chip8::iFx65));
 
   //Initialize program counter
   programCounter = PROG_START_ADDR;
