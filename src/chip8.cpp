@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 #include <random>
 #include "chip8.h"
 
@@ -121,29 +122,45 @@ void Chip8::cycle(){
 }
 
 void Chip8::op0(){
-
+  auto itMap0 = opMap0.find(opcode & 0x000Fu);
+  if (itMap0 != opMap0.end()){
+    MFP operation0 = opMap0[opcode & 0x000Fu];
+    std::invoke(operation0,this);
+  }
 }
 
 void Chip8::op8(){
-
+  auto itMap8 = opMap8.find(opcode & 0x000Fu);
+  if (itMap8 != opMap8.end()){
+    MFP operation8 = opMap8[opcode & 0x000Fu];
+    std::invoke(operation8, this);
+  }
 }
 
 void Chip8::opE(){
-
+  auto itMapE = opMapE.find(opcode & 0x000Fu);
+  if (itMapE != opMapE.end()){
+    MFP operationE = opMapE[opcode & 0x000Fu];
+    std::invoke(operationE, this);
 }
-
+}
 void Chip8::opF(){
-
+  auto itMapF = opMapF.find(opcode & 0x00FFu);
+  if (itMapF != opMapF.end()){
+    MFP operationF = opMapF[opcode & 0x00FFu];
+    std::invoke(operationF, this);
 }
-
+}
 void Chip8::i00E0(){
   memset(display, 0, sizeof(display));
+
 }
 
 void Chip8::i00EE(){
   //The interpreter sets the program counter to the
   //address at the top of the stack, then subtracts 1 from the stack pointer.
-  programCounter =  stack[--stackPointer];
+  --stackPointer;
+  programCounter =  stack[stackPointer];
 }
 void Chip8::i1nnn(){
   //(JP addr) Jump to location nnn

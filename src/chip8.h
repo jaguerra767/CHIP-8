@@ -30,8 +30,8 @@ public:
   Chip8();
   void loadROM(const std::string &file);
   void cycle();
-  std::array<uint8_t, 16> keyboard{};
-  uint32_t display[DISP_W * DISP_H];
+  uint8_t keyboard[16]{};//go back and make const
+  uint32_t display[DISP_W * DISP_H]{};
   typedef void (Chip8::*MFP)();
   std::map <uint16_t, MFP> opMap;
   std::map <uint16_t, MFP> opMap0;
